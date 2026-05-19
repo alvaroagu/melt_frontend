@@ -25,20 +25,64 @@ export default function RootLayout({
       document.documentElement.classList.remove('dark');
     }
 
+    // Theme guard: prevent unexpected changes to class 'dark' unless allowed by our toggle
+    try {
+      window.__themeChangeAllowed = false;
+      (function(){
+        var origAdd = DOMTokenList.prototype.add;
+        var origRemove = DOMTokenList.prototype.remove;
+        var origToggle = DOMTokenList.prototype.toggle;
+        DOMTokenList.prototype.add = function(){
+          for (var i=0;i<arguments.length;i++){
+            if (arguments[i] === 'dark'){
+              if (!window.__themeChangeAllowed){
+                console.warn('[theme-guard] blocked add("dark")');
+                return;
+              }
+            }
+          }
+          return origAdd.apply(this, arguments);
+        };
+        DOMTokenList.prototype.remove = function(){
+          for (var i=0;i<arguments.length;i++){
+            if (arguments[i] === 'dark'){
+              if (!window.__themeChangeAllowed){
+                console.warn('[theme-guard] blocked remove("dark")');
+                return;
+              }
+            }
+          }
+          return origRemove.apply(this, arguments);
+        };
+        DOMTokenList.prototype.toggle = function(token, force){
+          if (token === 'dark'){
+            if (!window.__themeChangeAllowed){
+              console.warn('[theme-guard] blocked toggle("dark")', force);
+              if (typeof force !== 'undefined'){
+                return force;
+              }
+              return this.contains('dark');
+            }
+          }
+          return origToggle.apply(this, arguments);
+        };
+      })();
+    } catch (e) { /* ignore guard errors */ }
+
     // Development instrumentation: log stack traces when the 'dark' token is added/removed/toggled
     try {
       if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
         (function(){
-          var origAdd = DOMTokenList.prototype.add;
-          var origRemove = DOMTokenList.prototype.remove;
-          var origToggle = DOMTokenList.prototype.toggle;
+          var origAdd2 = DOMTokenList.prototype.add;
+          var origRemove2 = DOMTokenList.prototype.remove;
+          var origToggle2 = DOMTokenList.prototype.toggle;
           DOMTokenList.prototype.add = function(){
             for (var i=0;i<arguments.length;i++){
               if (arguments[i] === 'dark'){
                 console.log('[theme-instrumentation] DOMTokenList.add dark', new Error().stack);
               }
             }
-            return origAdd.apply(this, arguments);
+            return origAdd2.apply(this, arguments);
           };
           DOMTokenList.prototype.remove = function(){
             for (var i=0;i<arguments.length;i++){
@@ -46,13 +90,13 @@ export default function RootLayout({
                 console.log('[theme-instrumentation] DOMTokenList.remove dark', new Error().stack);
               }
             }
-            return origRemove.apply(this, arguments);
+            return origRemove2.apply(this, arguments);
           };
           DOMTokenList.prototype.toggle = function(token, force){
             if (token === 'dark'){
               console.log('[theme-instrumentation] DOMTokenList.toggle dark', force, new Error().stack);
             }
-            return origToggle.apply(this, arguments);
+            return origToggle2.apply(this, arguments);
           };
           var prevClass = document.documentElement.className;
           new MutationObserver(function(mutations){
