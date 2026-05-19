@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/sheet"
 // Dynamic icon loader from lucide-react: use name strings from lib/navigation
 // @ts-ignore - dynamic import has no TS types bundled here
-import DynamicIcon from "lucide-react/dynamic"
 
 import type { NavItem } from "@/lib/navigation"
 
