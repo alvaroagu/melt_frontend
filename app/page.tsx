@@ -1,3 +1,4 @@
+import { ModeToggle } from "@/components/ui/ModeToggle";
 import Image from "next/image";
 
 export default function Home() {
@@ -15,7 +16,7 @@ export default function Home() {
           </div>
         </div>
       </header>
-
+      <ModeToggle />
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <div className="rounded-lg border border-border bg-card p-4 text-card-foreground">
           Contenido
