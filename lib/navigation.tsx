@@ -2,9 +2,7 @@ export type NavItem = {
   id: string;
   label: string;
   href?: string;
-  /**
-   * Icon name for lucide-react DynamicIcon (e.g. 'home', 'menu', 'settings')
-   */
+
   icon?: string;
   children?: NavItem[];
 };

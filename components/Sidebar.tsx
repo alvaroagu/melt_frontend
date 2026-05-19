@@ -1,7 +1,8 @@
 "use client"
 
-import React, { useState } from "react"
+import { useState } from "react"
 import Link from "next/link"
+import { ChevronDown } from 'lucide-react';
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -13,9 +14,6 @@ import {
   SheetTitle,
   SheetClose,
 } from "@/components/ui/sheet"
-// Dynamic icon loader from lucide-react: use name strings from lib/navigation
-// @ts-ignore - dynamic import has no TS types bundled here
-
 import type { NavItem } from "@/lib/navigation"
 
 type SidebarProps = {
@@ -41,12 +39,10 @@ export default function Sidebar({ menu }: SidebarProps) {
               )}
             >
               {item.icon && (
-                // @ts-ignore
-                <DynamicIcon name={item.icon} className="size-4" />
+                <ChevronDown name={item.icon} className="size-4" />
               )}
               <span className="truncate">{item.label}</span>
-              {/* @ts-ignore */}
-              <DynamicIcon
+              <ChevronDown
                 name="chevron-down"
                 className={cn(
                   "ml-auto transition-transform",
@@ -67,8 +63,7 @@ export default function Sidebar({ menu }: SidebarProps) {
             )}
           >
             {item.icon && (
-              // @ts-ignore
-              <DynamicIcon name={item.icon} className="size-4" />
+              <ChevronDown name={item.icon} className="size-4" />
             )}
             <span className="truncate">{item.label}</span>
           </Link>
@@ -79,13 +74,11 @@ export default function Sidebar({ menu }: SidebarProps) {
 
   return (
     <>
-      {/* Mobile: sheet trigger */}
       <div className="lg:hidden">
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className="m-3">
-              {/* @ts-ignore */}
-              <DynamicIcon name="menu" />
+              <ChevronDown name="menu" />
               <span className="sr-only">Open menu</span>
             </Button>
           </SheetTrigger>
@@ -111,7 +104,7 @@ export default function Sidebar({ menu }: SidebarProps) {
       </div>
 
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:py-6 lg:pl-4 lg:pr-2">
+      <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:py-6 lg:pl-4 lg:pr-2 lg:h-screen">
         <nav className="flex-1 overflow-y-auto px-2">{menu.map((item) => renderItem(item))}</nav>
       </aside>
     </>

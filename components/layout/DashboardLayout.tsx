@@ -1,7 +1,5 @@
-import type { Metadata } from "next";
-import "./globals.css";
 import { mainMenu } from "@/lib/navigation";
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "../Sidebar";
 
 export default function RootLayout({
   children,

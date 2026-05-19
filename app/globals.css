@@ -118,6 +118,8 @@
 }
 
 @layer base {
+  html, body, #__next { height: 100%; }
+
   * {
     @apply border-border outline-ring/50;
   }
