@@ -1,5 +1,4 @@
-import Sidebar from "../Siderbar";
-import { TooltipProvider } from "../ui/tooltip";
+import { Sidebar } from "../Sidebar";
 
 export default function DashboardLayout({
   children,
@@ -8,12 +7,11 @@ export default function DashboardLayout({
 }>) {
   return (
     <main className="flex-1 min-h-screen">
-      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
-        <TooltipProvider>
-          <Sidebar />
+      <Sidebar>
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-6">
           {children}
-        </TooltipProvider>
-      </div>
+        </div>
+      </Sidebar>
     </main>
   );
 }
