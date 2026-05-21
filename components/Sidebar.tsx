@@ -9,6 +9,8 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
   BarChart3,
   FileText,
   Bell,
@@ -16,12 +18,15 @@ import {
   HelpCircle
 } from 'lucide-react';
 
+import SidebarItem from './SidebarItem';
+
 interface NavigationItem {
   id: string;
   name: string;
   icon: React.ComponentType<{ className?: string }>;
-  href: string;
+  href?: string;
   badge?: string;
+  children?: NavigationItem[];
 }
 
 interface SidebarProps {
@@ -32,9 +37,21 @@ interface SidebarProps {
 // Updated navigation items - remove logout from here
 const navigationItems: NavigationItem[] = [
   { id: "dashboard", name: "Dashboard", icon: Home, href: "/dashboard" },
-  { id: "analytics", name: "Ventas", icon: BarChart3, href: "/ventas" },
-  { id: "documents", name: "Cuentas", icon: FileText, href: "/cuentas", badge: "3" },
-  { id: "notifications", name: "Inventario", icon: Bell, href: "/inventario", badge: "12" },
+  { id: "analytics", name: "Ventas", icon: BarChart3, href: "/ventas", children: [
+      { id: "ventas-resumen", name: "Resumen", icon: BarChart3, href: "/ventas/resumen" },
+      { id: "ventas-detalle", name: "Detalle", icon: BarChart3, href: "/ventas/detalle" }
+    ]
+  },
+  { id: "documents", name: "Cuentas", icon: FileText, href: "/cuentas", badge: "3", children: [
+      { id: "cuentas-facturas", name: "Facturas", icon: FileText, href: "/cuentas/facturas" },
+      { id: "cuentas-balance", name: "Balances", icon: FileText, href: "/cuentas/balance" }
+    ]
+  },
+  { id: "notifications", name: "Inventario", icon: Bell, href: "/inventario", badge: "12", children: [
+      { id: "inventario-productos", name: "Productos", icon: Bell, href: "/inventario/productos" },
+      { id: "inventario-stock", name: "Stock", icon: Bell, href: "/inventario/stock" }
+    ]
+  },
   { id: "profile", name: "Catalogo", icon: User, href: "/catalogo" },
   { id: "settings", name: "Compras", icon: Settings, href: "/compras" },
   { id: "help", name: "Proveedores", icon: HelpCircle, href: "/proveedores" },
@@ -153,78 +170,15 @@ export function Sidebar({ className = "", children }: SidebarProps) {
         {/* Navigation */}
         <nav className="flex-1 px-3 py-2 overflow-y-auto">
           <ul className="space-y-0.5">
-            {navigationItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = activeItem === item.id;
-
-              return (
-                <li key={item.id}>
-                  <button
-                    onClick={() => handleItemClick(item.id)}
-                    className={`
-                      w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-md text-left transition-all duration-200 group
-                      ${isActive
-                        ? "bg-blue-50 text-blue-700"
-                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                      }
-                      ${isCollapsed ? "justify-center px-2" : ""}
-                    `}
-                    title={isCollapsed ? item.name : undefined}
-                  >
-                    <div className="flex items-center justify-center min-w-[24px]">
-                      <Icon
-                        className={`
-                          h-4.5 w-4.5 flex-shrink-0
-                          ${isActive
-                            ? "text-blue-600"
-                            : "text-slate-500 group-hover:text-slate-700"
-                          }
-                        `}
-                      />
-                    </div>
-
-                    {!isCollapsed && (
-                      <div className="flex items-center justify-between w-full">
-                        <span className={`text-sm ${isActive ? "font-medium" : "font-normal"}`}>{item.name}</span>
-                        {item.badge && (
-                          <span className={`
-                            px-1.5 py-0.5 text-xs font-medium rounded-full
-                            ${isActive
-                              ? "bg-blue-100 text-blue-700"
-                              : "bg-slate-100 text-slate-600"
-                            }
-                          `}>
-                            {item.badge}
-                          </span>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Badge for collapsed state */}
-                    {isCollapsed && item.badge && (
-                      <div className="absolute top-1 right-1 w-4 h-4 flex items-center justify-center rounded-full bg-blue-100 border border-white">
-                        <span className="text-[10px] font-medium text-blue-700">
-                          {parseInt(item.badge) > 9 ? '9+' : item.badge}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Tooltip for collapsed state */}
-                    {isCollapsed && (
-                      <div className="absolute left-full ml-2 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
-                        {item.name}
-                        {item.badge && (
-                          <span className="ml-1.5 px-1 py-0.5 bg-slate-700 rounded-full text-[10px]">
-                            {item.badge}
-                          </span>
-                        )}
-                        <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-1.5 h-1.5 bg-slate-800 rotate-45" />
-                      </div>
-                    )}
-                  </button>
-                </li>
-              );
-            })}
+{navigationItems.map((item) => (
+  <SidebarItem
+    key={item.id}
+    item={item}
+    isCollapsed={isCollapsed}
+    activeItem={activeItem}
+    onActivate={handleItemClick}
+  />
+))}
           </ul>
         </nav>
 
