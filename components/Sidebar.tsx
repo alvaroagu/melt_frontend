@@ -32,6 +32,7 @@ interface NavigationItem {
 interface SidebarProps {
   className?: string;
   children?: React.ReactNode;
+  defaultCollapsed?: boolean;
 }
 
 // Updated navigation items - remove logout from here
@@ -57,9 +58,9 @@ const navigationItems: NavigationItem[] = [
   { id: "help", name: "Proveedores", icon: HelpCircle, href: "/proveedores" },
 ];
 
-export function Sidebar({ className = "", children }: SidebarProps) {
+export function Sidebar({ className = "", children, defaultCollapsed = false }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
   const [activeItem, setActiveItem] = useState("dashboard");
 
   // Auto-open sidebar on desktop
