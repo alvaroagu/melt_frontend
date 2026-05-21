@@ -32,12 +32,12 @@ interface SidebarProps {
 // Updated navigation items - remove logout from here
 const navigationItems: NavigationItem[] = [
   { id: "dashboard", name: "Dashboard", icon: Home, href: "/dashboard" },
-  { id: "analytics", name: "Analytics", icon: BarChart3, href: "/analytics" },
-  { id: "documents", name: "Documents", icon: FileText, href: "/documents", badge: "3" },
-  { id: "notifications", name: "Notifications", icon: Bell, href: "/notifications", badge: "12" },
-  { id: "profile", name: "Profile", icon: User, href: "/profile" },
-  { id: "settings", name: "Settings", icon: Settings, href: "/settings" },
-  { id: "help", name: "Help & Support", icon: HelpCircle, href: "/help" },
+  { id: "analytics", name: "Ventas", icon: BarChart3, href: "/ventas" },
+  { id: "documents", name: "Cuentas", icon: FileText, href: "/cuentas", badge: "3" },
+  { id: "notifications", name: "Inventario", icon: Bell, href: "/inventario", badge: "12" },
+  { id: "profile", name: "Catalogo", icon: User, href: "/catalogo" },
+  { id: "settings", name: "Compras", icon: Settings, href: "/compras" },
+  { id: "help", name: "Proveedores", icon: HelpCircle, href: "/proveedores" },
 ];
 
 export function Sidebar({ className = "", children }: SidebarProps) {
@@ -104,23 +104,23 @@ export function Sidebar({ className = "", children }: SidebarProps) {
       >
         {/* Header with logo and collapse button */}
         <div className="flex items-center justify-between p-5 border-b border-slate-200 bg-slate-50/60">
-          {!isCollapsed && (
-            <div className="flex items-center space-x-2.5">
-              <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center shadow-sm">
-                <span className="text-white font-bold text-base">A</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="font-semibold text-slate-800 text-base">Acme Corp</span>
-                <span className="text-xs text-slate-500">Enterprise Dashboard</span>
-              </div>
-            </div>
-          )}
+          {/* {!isCollapsed && ( */}
+          {/*   <div className="flex items-center space-x-2.5"> */}
+          {/*     <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center shadow-sm"> */}
+          {/*       <span className="text-white font-bold text-base">A</span> */}
+          {/*     </div> */}
+          {/*     <div className="flex flex-col"> */}
+          {/*       <span className="font-semibold text-slate-800 text-base">Acme Corp</span> */}
+          {/*       <span className="text-xs text-slate-500">Enterprise Dashboard</span> */}
+          {/*     </div> */}
+          {/*   </div> */}
+          {/* )} */}
 
-          {isCollapsed && (
-            <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center mx-auto shadow-sm">
-              <span className="text-white font-bold text-base">A</span>
-            </div>
-          )}
+          {/* {isCollapsed && ( */}
+          {/*   <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center mx-auto shadow-sm"> */}
+          {/*     <span className="text-white font-bold text-base">A</span> */}
+          {/*   </div> */}
+          {/* )} */}
 
           {/* Desktop collapse button */}
           <button
