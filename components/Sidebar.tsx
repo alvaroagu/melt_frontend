@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import {
-  Home,
   User,
   Settings,
   LogOut,
@@ -9,13 +8,14 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
-  ChevronDown,
-  ChevronUp,
-  BarChart3,
+  BanknoteArrowUp,
   FileText,
   Bell,
   Search,
-  HelpCircle
+  HandCoins,
+  Boxes,
+  ShoppingCart,
+  LayoutDashboardIcon
 } from 'lucide-react';
 
 import SidebarItem from './SidebarItem';
@@ -23,7 +23,7 @@ import SidebarItem from './SidebarItem';
 interface NavigationItem {
   id: string;
   name: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon?: React.ComponentType<{ className?: string }>;
   href?: string;
   badge?: string;
   children?: NavigationItem[];
@@ -37,25 +37,34 @@ interface SidebarProps {
 
 // Updated navigation items - remove logout from here
 const navigationItems: NavigationItem[] = [
-  { id: "dashboard", name: "Dashboard", icon: Home, href: "/dashboard" },
-  { id: "analytics", name: "Ventas", icon: BarChart3, href: "/ventas", children: [
-      { id: "ventas-resumen", name: "Resumen", icon: BarChart3, href: "/ventas/resumen" },
-      { id: "ventas-detalle", name: "Detalle", icon: BarChart3, href: "/ventas/detalle" }
+  { id: "dashboard", name: "Dashboard", icon: LayoutDashboardIcon, href: "/dashboard" },
+  {
+    id: "sales", name: "Ventas", icon: BanknoteArrowUp, href: "/ventas", children: [
+      { id: "new-sale", name: "Nueva Venta", href: "/ventas/resumen" },
+      { id: "sale-details", name: "Historial de Venta", href: "/ventas/detalle" }
     ]
   },
-  { id: "documents", name: "Cuentas", icon: FileText, href: "/cuentas", badge: "3", children: [
-      { id: "cuentas-facturas", name: "Facturas", icon: FileText, href: "/cuentas/facturas" },
-      { id: "cuentas-balance", name: "Balances", icon: FileText, href: "/cuentas/balance" }
+  {
+    id: "documents", name: "Cuentas por Cobrar", icon: HandCoins, href: "/cuentas", badge: "3", children: [
+      { id: "credits-pending", name: "Creditos Pendientes", href: "/cuentas/facturas" },
+      { id: "payment-history", name: "Historial de Pagos", href: "/cuentas/balance" }
     ]
   },
-  { id: "notifications", name: "Inventario", icon: Bell, href: "/inventario", badge: "12", children: [
-      { id: "inventario-productos", name: "Productos", icon: Bell, href: "/inventario/productos" },
-      { id: "inventario-stock", name: "Stock", icon: Bell, href: "/inventario/stock" }
+  {
+    id: "inventory", name: "Inventario y Catalogo", icon: Boxes, href: "/inventario", badge: "12", children: [
+      { id: "iventory-products", name: "Productos", href: "/inventario/productos" },
+      { id: "categories", name: "Cateogorias", href: "/inventario/categoria" }
     ]
   },
-  { id: "profile", name: "Catalogo", icon: User, href: "/catalogo" },
-  { id: "settings", name: "Compras", icon: Settings, href: "/compras" },
-  { id: "help", name: "Proveedores", icon: HelpCircle, href: "/proveedores" },
+  {
+    id: "purchases", name: "Compras / Proveedores", icon: ShoppingCart, href: "/compras_proveedores", badge: "12", children: [
+      { id: "register-purcharse", name: "Registrar Compra", href: "/inventario/productos" },
+      { id: "purchase-history", name: "Historial de Compras", href: "/inventario/categoria" },
+      { id: "vendors", name: "Proveedores", href: "/inventario/categoria" }
+    ]
+  },
+  { id: "clientes", name: "Clientes", icon: User, href: "/clientes" },
+  { id: "settings", name: "Configuracion", icon: Settings, href: "/configuracion" },
 ];
 
 export function Sidebar({ className = "", children, defaultCollapsed = false }: SidebarProps) {
@@ -171,15 +180,15 @@ export function Sidebar({ className = "", children, defaultCollapsed = false }: 
         {/* Navigation */}
         <nav className="flex-1 px-3 py-2 overflow-y-auto">
           <ul className="space-y-0.5">
-{navigationItems.map((item) => (
-  <SidebarItem
-    key={item.id}
-    item={item}
-    isCollapsed={isCollapsed}
-    activeItem={activeItem}
-    onActivate={handleItemClick}
-  />
-))}
+            {navigationItems.map((item) => (
+              <SidebarItem
+                key={item.id}
+                item={item}
+                isCollapsed={isCollapsed}
+                activeItem={activeItem}
+                onActivate={handleItemClick}
+              />
+            ))}
           </ul>
         </nav>
 

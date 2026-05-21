@@ -6,7 +6,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 interface NavigationItem {
   id: string;
   name: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon?: React.ComponentType<{ className?: string }>;
   href?: string;
   badge?: string;
   children?: NavigationItem[];
@@ -71,7 +71,11 @@ export default function SidebarItem({ item, isCollapsed, activeItem, onActivate 
         aria-controls={hasChildren ? `${item.id}-submenu` : undefined}
       >
         <div className="flex items-center justify-center min-w-[24px]">
-          <Icon className={`h-4.5 w-4.5 flex-shrink-0 ${isActive ? 'text-blue-600' : 'text-slate-500 group-hover:text-slate-700'}`} />
+          {Icon ? (
+            <Icon className={`h-4.5 w-4.5 flex-shrink-0 ${isActive ? 'text-blue-600' : 'text-slate-500 group-hover:text-slate-700'}`} />
+          ) : (
+            <div className="h-4.5 w-4.5" />
+          )}
         </div>
 
         {!isCollapsed && (
@@ -124,7 +128,11 @@ export default function SidebarItem({ item, isCollapsed, activeItem, onActivate 
                   className={`w-full flex items-center space-x-2.5 px-2 py-2 rounded-md text-sm transition-colors duration-150 ${childActive ? 'bg-blue-50 text-blue-700 font-medium' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
                 >
                   <div className="flex items-center justify-center min-w-[20px]">
-                    <ChildIcon className={`h-3.5 w-3.5 ${childActive ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'}`} />
+                    {ChildIcon ? (
+                      <ChildIcon className={`h-3.5 w-3.5 ${childActive ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'}`} />
+                    ) : (
+                      <div className="h-3.5 w-3.5" />
+                    )}
                   </div>
                   <span className="truncate">{child.name}</span>
                 </button>
@@ -153,7 +161,11 @@ export default function SidebarItem({ item, isCollapsed, activeItem, onActivate 
                     className={`w-full flex items-center space-x-2.5 px-2 py-2 rounded-md text-sm transition-colors duration-150 ${childActive ? 'bg-blue-50 text-blue-700 font-medium' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
                   >
                     <div className="flex items-center justify-center min-w-[20px]">
-                      <ChildIcon className={`h-3.5 w-3.5 ${childActive ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'}`} />
+                      {ChildIcon ? (
+                        <ChildIcon className={`h-3.5 w-3.5 ${childActive ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'}`} />
+                      ) : (
+                        <div className="h-3.5 w-3.5" />
+                      )}
                     </div>
                     <span className="truncate">{child.name}</span>
                   </button>
