@@ -1,0 +1,176 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver" // O "mysql" / "postgresql" según tu preferencia
+  url      = env("DATABASE_URL")
+}
+
+// 1. CATALOG TABLES
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String    @db.VarChar(50)
+  createdAt DateTime  @default(now())
+  products  Product[]
+
+  @@map("categories")
+}
+
+model Flavor {
+  id                  Int                @id @default(autoincrement())
+  name                String             @db.VarChar(50)
+  isAvailable         Boolean            @default(true)
+  currentStockLiters  Decimal            @default(0.00) @db.Decimal(10, 2)
+  saleItemFlavors     SaleItemFlavor[]
+
+  @@map("flavors")
+}
+
+model PaymentMethod {
+  id             Int             @id @default(autoincrement())
+  name           String          @db.VarChar(50)
+  sales          Sale[]
+  creditPayments CreditPayment[]
+
+  @@map("payment_methods")
+}
+
+// 2. ENTITIES
+model Customer {
+  id                 Int                  @id @default(autoincrement())
+  taxId              String               @unique @db.VarChar(20)
+  fullName           String               @db.VarChar(100)
+  phone              String?              @db.VarChar(20)
+  creditLimit        Decimal              @default(0.00) @db.Decimal(12, 2)
+  currentDebt        Decimal              @default(0.00) @db.Decimal(12, 2)
+  createdAt          DateTime             @default(now())
+  sales              Sale[]
+  accountsReceivable AccountsReceivable[]
+
+  @@map("customers")
+}
+
+model Supplier {
+  id          Int        @id @default(autoincrement())
+  taxId       String     @unique @db.VarChar(20)
+  companyName String     @db.VarChar(150)
+  phone       String?    @db.VarChar(20)
+  email       String?    @db.VarChar(100)
+  purchases   Purchase[]
+
+  @@map("suppliers")
+}
+
+// 3. PRODUCTS & INVENTORY
+model Product {
+  id             Int            @id @default(autoincrement())
+  categoryId     Int
+  name           String         @db.VarChar(100)
+  unitCost       Decimal        @default(0.00) @db.Decimal(12, 2)
+  unitPrice      Decimal        @db.Decimal(12, 2)
+  currentStock   Int            @default(0)
+  trackInventory Boolean        @default(true)
+  category       Category       @relation(fields: [categoryId], references: [id])
+  purchaseItems  PurchaseItem[]
+  saleItems      SaleItem[]
+
+  @@map("products")
+}
+
+// 4. PURCHASING MODULE
+model Purchase {
+  id            Int            @id @default(autoincrement())
+  supplierId    Int
+  invoiceNumber String?        @db.VarChar(50)
+  totalCost     Decimal        @db.Decimal(12, 2)
+  purchaseDate  DateTime       @default(now())
+  supplier      Supplier       @relation(fields: [supplierId], references: [id])
+  items         PurchaseItem[]
+
+  @@map("purchases")
+}
+
+model PurchaseItem {
+  id          Int      @id @default(autoincrement())
+  purchaseId  Int
+  productId   Int
+  quantity    Int
+  costPerUnit Decimal  @db.Decimal(12, 2)
+  subtotal    Decimal  @db.Decimal(12, 2)
+  purchase    Purchase @relation(fields: [purchaseId], references: [id])
+  product     Product  @relation(fields: [productId], references: [id])
+
+  @@map("purchase_items")
+}
+
+// 5. SALES MODULE
+model Sale {
+  id                 Int                  @id @default(autoincrement())
+  customerId         Int?
+  paymentMethodId    Int
+  totalAmount        Decimal              @db.Decimal(12, 2)
+  isCredit           Boolean              @default(false)
+  saleDate           DateTime             @default(now())
+  customer           Customer?            @relation(fields: [customerId], references: [id])
+  paymentMethod      PaymentMethod        @relation(fields: [paymentMethodId], references: [id])
+  items              SaleItem[]
+  accountsReceivable AccountsReceivable[]
+
+  @@map("sales")
+}
+
+model SaleItem {
+  id              Int              @id @default(autoincrement())
+  saleId          Int
+  productId       Int
+  quantity        Int
+  priceAtSale     Decimal          @db.Decimal(12, 2)
+  subtotal        Decimal          @db.Decimal(12, 2)
+  sale            Sale             @relation(fields: [saleId], references: [id])
+  product         Product          @relation(fields: [productId], references: [id])
+  saleItemFlavors SaleItemFlavor[]
+
+  @@map("sale_items")
+}
+
+model SaleItemFlavor {
+  id         Int      @id @default(autoincrement())
+  saleItemId Int
+  flavorId   Int
+  saleItem   SaleItem @relation(fields: [saleItemId], references: [id])
+  flavor     Flavor   @relation(fields: [flavorId], references: [id])
+
+  @@map("sale_item_flavors")
+}
+
+// 6. ACCOUNTS RECEIVABLE
+model AccountsReceivable {
+  id               Int             @id @default(autoincrement())
+  saleId           Int
+  customerId       Int
+  originalAmount   Decimal         @db.Decimal(12, 2)
+  remainingBalance Decimal         @db.Decimal(12, 2)
+  status           String          @default("PENDING") @db.VarChar(20)
+  dueDate          DateTime?       @db.Date
+  sale             Sale            @relation(fields: [saleId], references: [id])
+  customer         Customer        @relation(fields: [customerId], references: [id])
+  payments         CreditPayment[]
+
+  @@map("accounts_receivable")
+}
+
+model CreditPayment {
+  id                 Int                @id @default(autoincrement())
+  arId               Int
+  paymentMethodId    Int
+  amountPaid         Decimal            @db.Decimal(12, 2)
+  paymentDate        DateTime           @default(now())
+  referenceNumber    String?            @db.VarChar(50)
+  accountsReceivable AccountsReceivable @relation(fields: [arId], references: [id])
+  paymentMethod      PaymentMethod      @relation(fields: [paymentMethodId], references: [id])
+
+  @@map("credit_payments")
+}
