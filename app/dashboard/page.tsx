@@ -2,6 +2,7 @@
 
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import DataTable, { DataTableColumn, DataTableAction } from "@/components/DataTable";
+import ContentLayout from "@/components/layout/ContentLayout";
 
 // 2. Defines la estructura exacta de tus registros
 interface EmpresaData {
@@ -74,20 +75,22 @@ export default function Page() {
   ];
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-4">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Personal de la Empresa</h1>
-        <p className="text-sm text-slate-500">Administra los accesos y roles asignados.</p>
-      </div>
+    <ContentLayout>
+      <div className="p-8 max-w-7xl mx-auto space-y-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Personal de la Empresa</h1>
+          <p className="text-sm text-slate-500">Administra los accesos y roles asignados.</p>
+        </div>
 
-      {/* 6. Invocación limpia pasando las propiedades */}
-      <DataTable
-        data={data}
-        columns={columns}
-        actions={actions}
-        getRowId={(row) => row.id} // Clave única para evitar problemas de renderizado de React
-        emptyState="No se encontraron miembros en este equipo."
-      />
-    </div>
+        {/* 6. Invocación limpia pasando las propiedades */}
+        <DataTable
+          data={data}
+          columns={columns}
+          actions={actions}
+          getRowId={(row) => row.id} // Clave única para evitar problemas de renderizado de React
+          emptyState="No se encontraron miembros en este equipo."
+        />
+      </div>
+    </ContentLayout>
   );
 }

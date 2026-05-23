@@ -17,6 +17,7 @@ import {
   ShoppingCart,
   LayoutDashboardIcon
 } from 'lucide-react';
+import { useSidebar } from './SidebarContext';
 
 import SidebarItem from './SidebarItem';
 
@@ -67,9 +68,8 @@ const navigationItems: NavigationItem[] = [
   { id: "settings", name: "Configuracion", icon: Settings, href: "/configuracion" },
 ];
 
-export function Sidebar({ className = "", children, defaultCollapsed = false }: SidebarProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
+export function Sidebar({ className = "" }: SidebarProps) {
+  const { isCollapsed, setIsCollapsed, isOpen, setIsOpen } = useSidebar();
   const [activeItem, setActiveItem] = useState("dashboard");
 
   // Auto-open sidebar on desktop
@@ -85,7 +85,7 @@ export function Sidebar({ className = "", children, defaultCollapsed = false }: 
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [setIsOpen]);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
   const toggleCollapse = () => setIsCollapsed(!isCollapsed);
@@ -122,7 +122,7 @@ export function Sidebar({ className = "", children, defaultCollapsed = false }: 
       {/* Sidebar */}
       <div
         className={`
-          fixed top-0 left-0 h-full bg-white border-r border-slate-200 z-40 transition-all duration-300 ease-in-out flex flex-col
+          fixed md:static top-0 left-0 h-full md:h-auto bg-white border-r border-slate-200 z-40 transition-all duration-300 ease-in-out flex flex-col
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
           ${isCollapsed ? "w-20" : "w-72"}
           md:translate-x-0
@@ -131,24 +131,6 @@ export function Sidebar({ className = "", children, defaultCollapsed = false }: 
       >
         {/* Header with logo and collapse button */}
         <div className="flex items-center justify-between p-5 border-b border-slate-200 bg-slate-50/60">
-          {/* {!isCollapsed && ( */}
-          {/*   <div className="flex items-center space-x-2.5"> */}
-          {/*     <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center shadow-sm"> */}
-          {/*       <span className="text-white font-bold text-base">A</span> */}
-          {/*     </div> */}
-          {/*     <div className="flex flex-col"> */}
-          {/*       <span className="font-semibold text-slate-800 text-base">Acme Corp</span> */}
-          {/*       <span className="text-xs text-slate-500">Enterprise Dashboard</span> */}
-          {/*     </div> */}
-          {/*   </div> */}
-          {/* )} */}
-
-          {/* {isCollapsed && ( */}
-          {/*   <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center mx-auto shadow-sm"> */}
-          {/*     <span className="text-white font-bold text-base">A</span> */}
-          {/*   </div> */}
-          {/* )} */}
-
           {/* Desktop collapse button */}
           <button
             onClick={toggleCollapse}
@@ -248,16 +230,6 @@ export function Sidebar({ className = "", children, defaultCollapsed = false }: 
             </button>
           </div>
         </div>
-      </div>
-
-      {/* Main Content Area */}
-      <div
-        className={`
-          transition-all duration-300 ease-in-out w-full
-          ${isCollapsed ? "md:ml-20" : "md:ml-72"}
-        `}
-      >
-        {children}
       </div>
     </>
   );
