@@ -44,11 +44,11 @@ export default function CreateProductForm() {
       console.log('Validated product', parsed)
       alert('Producto validado (demo): ' + parsed.name)
     } catch (err) {
-      if (err instanceof z.ZodError) {
+        if (err instanceof z.ZodError) {
         const map: Record<string, string> = {}
-        err.errors.forEach((e) => {
-          const key = (e.path && e.path[0]) || 'form'
-          map[String(key)] = e.message
+        err.issues.forEach((issue) => {
+          const key = (issue.path && issue.path[0]) || 'form'
+          map[String(key)] = issue.message
         })
         setErrors(map)
       } else {
