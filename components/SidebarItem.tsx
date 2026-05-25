@@ -1,7 +1,9 @@
-"use client";
+"use client"
 
-import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import React, { useEffect, useRef, useState } from "react"
+import { ChevronDown, ChevronUp } from "lucide-react"
+
+import { cn } from "@/lib/utils"
 
 interface NavigationItem {
   id: string;
@@ -20,40 +22,40 @@ type Props = {
 };
 
 export default function SidebarItem({ item, isCollapsed, activeItem, onActivate }: Props) {
-  const [open, setOpen] = useState(false);
-  const [hoverOpen, setHoverOpen] = useState(false);
-  const liRef = useRef<HTMLLIElement | null>(null);
+  const [open, setOpen] = useState(false)
+  const [hoverOpen, setHoverOpen] = useState(false)
+  const liRef = useRef<HTMLLIElement | null>(null)
 
-  const hasChildren = !!item.children && item.children.length > 0;
-  const isActive = activeItem === item.id || (hasChildren && item.children!.some(c => c.id === activeItem));
+  const hasChildren = !!item.children && item.children.length > 0
+  const isActive = activeItem === item.id || (hasChildren && item.children!.some((c) => c.id === activeItem))
 
   useEffect(() => {
     const onClickOutside = (e: MouseEvent) => {
       if (liRef.current && !liRef.current.contains(e.target as Node)) {
-        setHoverOpen(false);
+        setHoverOpen(false)
       }
-    };
+    }
     if (hoverOpen) {
-      document.addEventListener('mousedown', onClickOutside);
+      document.addEventListener("mousedown", onClickOutside)
     }
-    return () => document.removeEventListener('mousedown', onClickOutside);
-  }, [hoverOpen]);
+    return () => document.removeEventListener("mousedown", onClickOutside)
+  }, [hoverOpen])
 
-  const handleMainClick = (e?: React.MouseEvent) => {
+  const handleMainClick = () => {
     if (hasChildren) {
-      setOpen(prev => !prev);
+      setOpen((prev) => !prev)
     } else {
-      onActivate(item.id);
+      onActivate(item.id)
     }
-  };
+  }
 
   const handleChildClick = (childId: string) => {
-    onActivate(childId);
-    setOpen(false);
-    setHoverOpen(false);
-  };
+    onActivate(childId)
+    setOpen(false)
+    setHoverOpen(false)
+  }
 
-  const Icon = item.icon;
+  const Icon = item.icon
 
   return (
     <li ref={liRef} className="relative">
@@ -61,75 +63,109 @@ export default function SidebarItem({ item, isCollapsed, activeItem, onActivate 
         onClick={handleMainClick}
         onMouseEnter={() => isCollapsed && hasChildren && setHoverOpen(true)}
         onMouseLeave={() => isCollapsed && hasChildren && setHoverOpen(false)}
-        className={`
-          w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-md text-left transition-all duration-200 group
-          ${isActive ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}
-          ${isCollapsed ? 'justify-center px-2' : ''}
-        `}
+        className={cn(
+          "group relative flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left transition-colors duration-200",
+          isActive
+            ? "bg-foreground text-background shadow-sm"
+            : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+          isCollapsed ? "justify-center px-2" : ""
+        )}
         title={isCollapsed ? item.name : undefined}
         aria-expanded={hasChildren ? open : undefined}
         aria-controls={hasChildren ? `${item.id}-submenu` : undefined}
       >
-        <div className="flex items-center justify-center min-w-[24px]">
+        <div className="flex min-w-[24px] items-center justify-center">
           {Icon ? (
-            <Icon className={`h-4.5 w-4.5 flex-shrink-0 ${isActive ? 'text-blue-600' : 'text-slate-500 group-hover:text-slate-700'}`} />
+            <Icon
+              className={cn(
+                "h-4.5 w-4.5 flex-shrink-0",
+                isActive ? "text-background" : "text-muted-foreground group-hover:text-foreground"
+              )}
+            />
           ) : (
             <div className="h-4.5 w-4.5" />
           )}
         </div>
 
         {!isCollapsed && (
-          <div className="flex items-center justify-between w-full">
-            <span className={`text-sm ${isActive ? 'font-medium' : 'font-normal'}`}>{item.name}</span>
-            <div className="flex items-center space-x-2">
+          <div className="flex w-full items-center justify-between gap-2">
+            <span className={cn("text-sm", isActive ? "font-medium tracking-[-0.01em]" : "font-normal")}>
+              {item.name}
+            </span>
+            <div className="flex items-center gap-2">
               {item.badge && (
-                <span className={`px-1.5 py-0.5 text-xs font-medium rounded-full ${isActive ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-600'}`}>
+                <span
+                  className={cn(
+                    "rounded-full border px-1.5 py-0.5 text-[11px] font-medium tracking-[0.14em]",
+                    isActive
+                      ? "border-background/20 bg-background/15 text-background"
+                      : "border-border/70 bg-background/60 text-muted-foreground"
+                  )}
+                >
                   {item.badge}
                 </span>
               )}
               {hasChildren && (
-                open ? <ChevronUp className="h-4 w-4 text-slate-400" /> : <ChevronDown className="h-4 w-4 text-slate-400" />
+                open ? (
+                  <ChevronUp className="h-4 w-4 text-current/60" />
+                ) : (
+                  <ChevronDown className="h-4 w-4 text-current/60" />
+                )
               )}
             </div>
           </div>
         )}
 
         {isCollapsed && item.badge && (
-          <div className="absolute top-1 right-1 w-4 h-4 flex items-center justify-center rounded-full bg-blue-100 border border-white">
-            <span className="text-[10px] font-medium text-blue-700">
+          <div className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full border border-border/70 bg-background">
+            <span className="text-[10px] font-medium text-foreground">
               {parseInt(item.badge) > 9 ? '9+' : item.badge}
             </span>
           </div>
         )}
 
         {isCollapsed && !hasChildren && (
-          <div className="absolute left-full ml-2 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
+          <div className="absolute left-full ml-2 rounded-xl border border-border/70 bg-card px-2.5 py-1.5 text-xs text-foreground opacity-0 invisible whitespace-nowrap shadow-xl transition-all duration-200 group-hover:visible group-hover:opacity-100">
             {item.name}
             {item.badge && (
-              <span className="ml-1.5 px-1 py-0.5 bg-slate-700 rounded-full text-[10px]">
+              <span className="ml-1.5 rounded-full bg-muted px-1 py-0.5 text-[10px]">
                 {item.badge}
               </span>
             )}
-            <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-1.5 h-1.5 bg-slate-800 rotate-45" />
+            <div className="absolute left-0 top-1/2 h-2 w-2 -translate-x-1 -translate-y-1/2 rotate-45 border-l border-b border-border/70 bg-card" />
           </div>
         )}
       </button>
 
-      {/* Expanded submenu (non-collapsed) */}
       {!isCollapsed && hasChildren && (
-        <ul id={`${item.id}-submenu`} className={`mt-1 pl-8 pr-2 space-y-1 ${open ? 'block' : 'hidden'}`} role="menu" aria-label={`${item.name} submenu`}>
+        <ul
+          id={`${item.id}-submenu`}
+          className={cn("mt-1 space-y-1 pl-8 pr-2", open ? "block" : "hidden")}
+          role="menu"
+          aria-label={`${item.name} submenu`}
+        >
           {item.children!.map((child) => {
-            const childActive = activeItem === child.id;
-            const ChildIcon = child.icon;
+            const childActive = activeItem === child.id
+            const ChildIcon = child.icon
             return (
               <li key={child.id}>
                 <button
                   onClick={() => handleChildClick(child.id)}
-                  className={`w-full flex items-center space-x-2.5 px-2 py-2 rounded-md text-sm transition-colors duration-150 ${childActive ? 'bg-blue-50 text-blue-700 font-medium' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
+                  className={cn(
+                    "flex w-full items-center gap-2.5 rounded-2xl px-3 py-2 text-sm transition-colors duration-150",
+                    childActive
+                      ? "bg-foreground text-background font-medium"
+                      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                  )}
                 >
-                  <div className="flex items-center justify-center min-w-[20px]">
+                  <div className="flex min-w-[20px] items-center justify-center">
                     {ChildIcon ? (
-                      <ChildIcon className={`h-3.5 w-3.5 ${childActive ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'}`} />
+                      <ChildIcon
+                        className={cn(
+                          "h-3.5 w-3.5",
+                          childActive ? "text-background" : "text-muted-foreground"
+                        )}
+                      />
                     ) : (
                       <div className="h-3.5 w-3.5" />
                     )}
@@ -137,32 +173,43 @@ export default function SidebarItem({ item, isCollapsed, activeItem, onActivate 
                   <span className="truncate">{child.name}</span>
                 </button>
               </li>
-            );
+            )
           })}
         </ul>
       )}
 
-      {/* Flyout submenu for collapsed state */}
       {isCollapsed && hasChildren && hoverOpen && (
         <div
-          className="absolute left-full top-0 ml-2 w-52 bg-white border border-slate-200 rounded-md shadow-lg z-50 p-2"
+          className="absolute left-full top-0 z-50 ml-2 w-56 rounded-2xl border border-border/70 bg-card/98 p-2 shadow-2xl backdrop-blur"
           onMouseEnter={() => setHoverOpen(true)}
           onMouseLeave={() => setHoverOpen(false)}
         >
-          <div className="px-2 py-1 text-xs text-slate-500 font-medium border-b border-slate-100 mb-2">{item.name}</div>
+          <div className="mb-2 border-b border-border/70 px-2 py-1 text-xs font-medium tracking-[0.14em] text-muted-foreground">
+            {item.name}
+          </div>
           <ul className="space-y-1">
             {item.children!.map((child) => {
-              const childActive = activeItem === child.id;
-              const ChildIcon = child.icon;
+              const childActive = activeItem === child.id
+              const ChildIcon = child.icon
               return (
                 <li key={child.id}>
                   <button
                     onClick={() => handleChildClick(child.id)}
-                    className={`w-full flex items-center space-x-2.5 px-2 py-2 rounded-md text-sm transition-colors duration-150 ${childActive ? 'bg-blue-50 text-blue-700 font-medium' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
+                    className={cn(
+                      "flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm transition-colors duration-150",
+                      childActive
+                        ? "bg-foreground text-background font-medium"
+                        : "text-foreground hover:bg-muted/60 hover:text-foreground"
+                    )}
                   >
-                    <div className="flex items-center justify-center min-w-[20px]">
+                    <div className="flex min-w-[20px] items-center justify-center">
                       {ChildIcon ? (
-                        <ChildIcon className={`h-3.5 w-3.5 ${childActive ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'}`} />
+                        <ChildIcon
+                          className={cn(
+                            "h-3.5 w-3.5",
+                            childActive ? "text-background" : "text-muted-foreground"
+                          )}
+                        />
                       ) : (
                         <div className="h-3.5 w-3.5" />
                       )}
@@ -170,12 +217,12 @@ export default function SidebarItem({ item, isCollapsed, activeItem, onActivate 
                     <span className="truncate">{child.name}</span>
                   </button>
                 </li>
-              );
+              )
             })}
           </ul>
-          <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-2 h-2 bg-white border border-slate-200 rotate-45" />
+          <div className="absolute left-0 top-1/2 h-2.5 w-2.5 -translate-x-1.5 -translate-y-1/2 rotate-45 border-l border-b border-border/70 bg-card" />
         </div>
       )}
     </li>
-  );
+  )
 }

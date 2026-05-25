@@ -9,11 +9,10 @@ export default function DashboardLayout({
 }>) {
   return (
     <SidebarProvider>
-      <main className="flex min-h-screen w-full">
+      <main className="flex min-h-screen w-full bg-background">
         <Sidebar />
         <ContentLayout>{children}</ContentLayout>
       </main>
     </SidebarProvider>
   );
 }
-

@@ -1,25 +1,28 @@
-"use client";
-import React, { useState, useEffect } from 'react';
+"use client"
+
+import React, { useEffect, useState } from "react"
 import {
-  User,
-  Settings,
-  LogOut,
-  Menu,
-  X,
+  BanknoteArrowUp,
+  Boxes,
   ChevronLeft,
   ChevronRight,
-  BanknoteArrowUp,
-  FileText,
-  Bell,
-  Search,
   HandCoins,
-  Boxes,
+  LayoutDashboardIcon,
+  LogOut,
+  Menu,
+  Search,
+  Settings,
   ShoppingCart,
-  LayoutDashboardIcon
-} from 'lucide-react';
-import { useSidebar } from './SidebarContext';
+  User,
+  X,
+} from "lucide-react"
 
-import SidebarItem from './SidebarItem';
+import { cn } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+
+import { useSidebar } from "./SidebarContext"
+import SidebarItem from "./SidebarItem"
 
 interface NavigationItem {
   id: string;
@@ -36,132 +39,150 @@ interface SidebarProps {
   defaultCollapsed?: boolean;
 }
 
-// Updated navigation items - remove logout from here
 const navigationItems: NavigationItem[] = [
   { id: "dashboard", name: "Dashboard", icon: LayoutDashboardIcon, href: "/dashboard" },
   {
-    id: "sales", name: "Ventas", icon: BanknoteArrowUp, href: "/ventas", children: [
-      { id: "new-sale", name: "Nueva Venta", href: "/ventas/resumen" },
-      { id: "sale-details", name: "Historial de Venta", href: "/ventas/detalle" }
+    id: "sales",
+    name: "Ventas",
+    icon: BanknoteArrowUp,
+    href: "/ventas",
+    children: [
+      { id: "new-sale", name: "Nueva venta", href: "/ventas/resumen" },
+      { id: "sale-details", name: "Historial de ventas", href: "/ventas/detalle" },
     ]
   },
   {
-    id: "documents", name: "Cuentas por Cobrar", icon: HandCoins, href: "/cuentas", badge: "3", children: [
-      { id: "credits-pending", name: "Creditos Pendientes", href: "/cuentas/facturas" },
-      { id: "payment-history", name: "Historial de Pagos", href: "/cuentas/balance" }
-    ]
+    id: "documents",
+    name: "Cuentas por cobrar",
+    icon: HandCoins,
+    href: "/cuentas",
+    badge: "3",
+    children: [
+      { id: "credits-pending", name: "Créditos pendientes", href: "/cuentas/facturas" },
+      { id: "payment-history", name: "Historial de pagos", href: "/cuentas/balance" },
+    ],
   },
   {
-    id: "inventory", name: "Inventario y Catalogo", icon: Boxes, href: "/inventario", badge: "12", children: [
+    id: "inventory",
+    name: "Inventario",
+    icon: Boxes,
+    href: "/inventario",
+    badge: "12",
+    children: [
       { id: "iventory-products", name: "Productos", href: "/inventario/productos" },
-      { id: "categories", name: "Cateogorias", href: "/inventario/categoria" }
-    ]
+      { id: "categories", name: "Categorías", href: "/inventario/categoria" },
+    ],
   },
   {
-    id: "purchases", name: "Compras / Proveedores", icon: ShoppingCart, href: "/compras_proveedores", badge: "12", children: [
-      { id: "register-purcharse", name: "Registrar Compra", href: "/inventario/productos" },
-      { id: "purchase-history", name: "Historial de Compras", href: "/inventario/categoria" },
-      { id: "vendors", name: "Proveedores", href: "/inventario/categoria" }
-    ]
+    id: "purchases",
+    name: "Compras / Proveedores",
+    icon: ShoppingCart,
+    href: "/compras_proveedores",
+    badge: "12",
+    children: [
+      { id: "register-purcharse", name: "Registrar compra", href: "/inventario/productos" },
+      { id: "purchase-history", name: "Historial de compras", href: "/inventario/categoria" },
+      { id: "vendors", name: "Proveedores", href: "/inventario/categoria" },
+    ],
   },
   { id: "clientes", name: "Clientes", icon: User, href: "/clientes" },
-  { id: "settings", name: "Configuracion", icon: Settings, href: "/configuracion" },
-];
+  { id: "settings", name: "Configuración", icon: Settings, href: "/configuracion" },
+]
 
 export function Sidebar({ className = "" }: SidebarProps) {
-  const { isCollapsed, setIsCollapsed, isOpen, setIsOpen } = useSidebar();
-  const [activeItem, setActiveItem] = useState("dashboard");
+  const { isCollapsed, setIsCollapsed, isOpen, setIsOpen } = useSidebar()
+  const [activeItem, setActiveItem] = useState("dashboard")
 
-  // Auto-open sidebar on desktop
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768) {
-        setIsOpen(true);
+        setIsOpen(true)
       } else {
-        setIsOpen(false);
+        setIsOpen(false)
       }
-    };
+    }
 
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [setIsOpen]);
+    handleResize()
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [setIsOpen])
 
-  const toggleSidebar = () => setIsOpen(!isOpen);
-  const toggleCollapse = () => setIsCollapsed(!isCollapsed);
+  const toggleSidebar = () => setIsOpen(!isOpen)
+  const toggleCollapse = () => setIsCollapsed(!isCollapsed)
 
   const handleItemClick = (itemId: string) => {
-    setActiveItem(itemId);
+    setActiveItem(itemId)
     if (window.innerWidth < 768) {
-      setIsOpen(false);
+      setIsOpen(false)
     }
-  };
+  }
 
   return (
     <>
-      {/* Mobile hamburger button */}
       <button
         onClick={toggleSidebar}
-        className="fixed top-6 left-6 z-50 p-3 rounded-lg bg-white shadow-md border border-slate-100 md:hidden hover:bg-slate-50 transition-all duration-200"
+        className="fixed top-4 left-4 z-50 inline-flex size-10 items-center justify-center rounded-2xl border border-border/70 bg-background/95 text-foreground shadow-sm backdrop-blur md:hidden"
         aria-label="Toggle sidebar"
       >
-        {isOpen ?
-          <X className="h-5 w-5 text-slate-600" /> :
-          <Menu className="h-5 w-5 text-slate-600" />
-        }
+        {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
       </button>
 
-      {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 md:hidden transition-opacity duration-300"
+          className="fixed inset-0 z-30 bg-foreground/20 backdrop-blur-sm transition-opacity duration-300 md:hidden"
           onClick={toggleSidebar}
         />
       )}
 
-      {/* Sidebar */}
       <div
-        className={`
-          fixed md:static top-0 left-0 h-full md:h-auto bg-white border-r border-slate-200 z-40 transition-all duration-300 ease-in-out flex flex-col
-          ${isOpen ? "translate-x-0" : "-translate-x-full"}
-          ${isCollapsed ? "w-20" : "w-72"}
-          md:translate-x-0
-          ${className}
-        `}
+        className={cn(
+          "fixed top-0 left-0 z-40 flex h-screen flex-col border-r border-border/70 bg-sidebar/95 text-sidebar-foreground shadow-[1px_0_0_0_rgba(0,0,0,0.02)] backdrop-blur-xl transition-all duration-300 md:static md:h-auto",
+          isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
+          isCollapsed ? "w-20" : "w-80",
+          className
+        )}
       >
-        {/* Header with logo and collapse button */}
-        <div className="flex items-center justify-between p-5 border-b border-slate-200 bg-slate-50/60">
-          {/* Desktop collapse button */}
+        <div className="flex items-center justify-between border-b border-border/70 px-4 py-4">
           <button
             onClick={toggleCollapse}
-            className="hidden md:flex p-1.5 rounded-md hover:bg-slate-100 transition-all duration-200"
+            className="hidden md:inline-flex size-9 items-center justify-center rounded-xl border border-border/70 bg-background/70 text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
             aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             {isCollapsed ? (
-              <ChevronRight className="h-4 w-4 text-slate-500" />
+              <ChevronRight className="h-4 w-4" />
             ) : (
-              <ChevronLeft className="h-4 w-4 text-slate-500" />
+              <ChevronLeft className="h-4 w-4" />
             )}
           </button>
+
+          <div className="flex items-center gap-2">
+            <div className="flex size-9 items-center justify-center rounded-2xl bg-foreground text-background shadow-sm">
+              <span className="text-sm font-medium tracking-[0.2em]">M</span>
+            </div>
+            {!isCollapsed && (
+              <div className="leading-tight">
+                <p className="text-sm font-medium tracking-[-0.02em]">Melt</p>
+                <p className="text-xs text-muted-foreground">Admin</p>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Search Bar */}
         {!isCollapsed && (
-          <div className="px-4 py-3">
+          <div className="px-4 py-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-              <input
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
                 type="text"
-                placeholder="Search..."
-                className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-md text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                placeholder="Buscar"
+                className="border-border/70 bg-background/80 pl-9"
               />
             </div>
           </div>
         )}
 
-        {/* Navigation */}
-        <nav className="flex-1 px-3 py-2 overflow-y-auto">
-          <ul className="space-y-0.5">
+        <nav className="flex-1 overflow-y-auto px-3 py-2">
+          <ul className="space-y-1">
             {navigationItems.map((item) => (
               <SidebarItem
                 key={item.id}
@@ -174,57 +195,52 @@ export function Sidebar({ className = "" }: SidebarProps) {
           </ul>
         </nav>
 
-        {/* Bottom section with profile and logout */}
-        <div className="mt-auto border-t border-slate-200">
-          {/* Profile Section */}
-          <div className={`border-b border-slate-200 bg-slate-50/30 ${isCollapsed ? 'py-3 px-2' : 'p-3'}`}>
+        <div className="mt-auto border-t border-border/70">
+          <div className={cn("border-b border-border/70 bg-background/60", isCollapsed ? "px-2 py-3" : "p-3")}>
             {!isCollapsed ? (
-              <div className="flex items-center px-3 py-2 rounded-md bg-white hover:bg-slate-50 transition-colors duration-200">
-                <div className="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center">
-                  <span className="text-slate-700 font-medium text-sm">JD</span>
+              <div className="flex items-center rounded-2xl border border-border/70 bg-background/80 px-3 py-2">
+                <div className="flex size-8 items-center justify-center rounded-full bg-muted/70">
+                  <span className="text-sm font-medium text-foreground">JD</span>
                 </div>
-                <div className="flex-1 min-w-0 ml-2.5">
-                  <p className="text-sm font-medium text-slate-800 truncate">John Doe</p>
-                  <p className="text-xs text-slate-500 truncate">Senior Administrator</p>
+                <div className="ml-2.5 min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium tracking-[-0.01em] text-foreground">John Doe</p>
+                  <p className="truncate text-xs text-muted-foreground">Senior Administrator</p>
                 </div>
-                <div className="w-2 h-2 bg-green-500 rounded-full ml-2" title="Online" />
+                <Badge variant="secondary" className="ml-2 border-border/70 uppercase tracking-[0.14em]">
+                  Online
+                </Badge>
               </div>
             ) : (
               <div className="flex justify-center">
                 <div className="relative">
-                  <div className="w-9 h-9 bg-slate-200 rounded-full flex items-center justify-center">
-                    <span className="text-slate-700 font-medium text-sm">JD</span>
+                  <div className="flex size-9 items-center justify-center rounded-full bg-muted/70">
+                    <span className="text-sm font-medium">JD</span>
                   </div>
-                  <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
+                  <div className="absolute -right-1 -bottom-1 size-3 rounded-full border-2 border-background bg-foreground" />
                 </div>
               </div>
             )}
           </div>
 
-          {/* Logout Button */}
           <div className="p-3">
             <button
               onClick={() => handleItemClick("logout")}
-              className={`
-                w-full flex items-center rounded-md text-left transition-all duration-200 group
-                text-red-600 hover:bg-red-50 hover:text-red-700
-                ${isCollapsed ? "justify-center p-2.5" : "space-x-2.5 px-3 py-2.5"}
-              `}
+              className={cn(
+                "group relative flex w-full items-center rounded-2xl border border-border/70 bg-background/80 text-left transition-colors hover:bg-muted/60",
+                isCollapsed ? "justify-center p-2.5" : "gap-2.5 px-3 py-2.5"
+              )}
               title={isCollapsed ? "Logout" : undefined}
             >
-              <div className="flex items-center justify-center min-w-[24px]">
-                <LogOut className="h-4.5 w-4.5 flex-shrink-0 text-red-500 group-hover:text-red-600" />
+              <div className="flex min-w-[24px] items-center justify-center">
+                <LogOut className="h-4.5 w-4.5 flex-shrink-0 text-muted-foreground group-hover:text-foreground" />
               </div>
 
-              {!isCollapsed && (
-                <span className="text-sm">Logout</span>
-              )}
+              {!isCollapsed && <span className="text-sm text-foreground">Logout</span>}
 
-              {/* Tooltip for collapsed state */}
               {isCollapsed && (
-                <div className="absolute left-full ml-2 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
+                <div className="absolute left-full ml-2 rounded-xl border border-border/70 bg-card px-2.5 py-1.5 text-xs text-foreground opacity-0 invisible whitespace-nowrap shadow-xl transition-all duration-200 group-hover:visible group-hover:opacity-100">
                   Logout
-                  <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-1.5 h-1.5 bg-slate-800 rotate-45" />
+                  <div className="absolute left-0 top-1/2 h-2 w-2 -translate-x-1 -translate-y-1/2 rotate-45 border-l border-b border-border/70 bg-card" />
                 </div>
               )}
             </button>
@@ -232,6 +248,5 @@ export function Sidebar({ className = "" }: SidebarProps) {
         </div>
       </div>
     </>
-  );
+  )
 }
-

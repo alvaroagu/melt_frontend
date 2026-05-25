@@ -4,6 +4,7 @@ import React from "react";
 import { MoreHorizontal } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -21,7 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-type AnyRecord = Record<string, any>;
+type AnyRecord = object;
 
 export type DataTableColumn<T extends AnyRecord> = {
   key: keyof T;
@@ -67,18 +68,18 @@ export function DataTable<T extends AnyRecord>({
   return (
     <div
       className={cn(
-        "w-full overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm",
+        "w-full overflow-x-auto rounded-2xl border border-border/70 bg-card/95 shadow-[0_1px_0_0_rgba(0,0,0,0.03)]",
         className
       )}
     >
       <Table className={cn("min-w-[680px]", tableClassName)}>
         <TableHeader>
-          <TableRow className="bg-slate-50 hover:bg-slate-50">
+          <TableRow className="bg-muted/30 hover:bg-muted/30">
             {columns.map((column) => (
               <TableHead
                 key={String(column.key)}
                 className={cn(
-                  "whitespace-nowrap text-slate-600",
+                  "whitespace-nowrap",
                   column.hideOnMobile && "hidden sm:table-cell",
                   column.headerClassName
                 )}
@@ -87,7 +88,7 @@ export function DataTable<T extends AnyRecord>({
               </TableHead>
             ))}
             {hasActions && (
-              <TableHead className="w-[72px] text-right text-slate-600">
+              <TableHead className="w-[72px] text-right">
                 Acciones
               </TableHead>
             )}
@@ -97,7 +98,7 @@ export function DataTable<T extends AnyRecord>({
         <TableBody>
           {data.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={colSpan} className="py-10 text-center text-slate-500">
+              <TableCell colSpan={colSpan} className="py-10 text-center text-muted-foreground">
                 {emptyState ?? "No hay registros para mostrar."}
               </TableCell>
             </TableRow>
@@ -114,7 +115,6 @@ export function DataTable<T extends AnyRecord>({
                       <TableCell
                         key={String(column.key)}
                         className={cn(
-                          "text-slate-700",
                           column.hideOnMobile && "hidden sm:table-cell",
                           column.className
                         )}
@@ -128,13 +128,15 @@ export function DataTable<T extends AnyRecord>({
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button
+                          <Button
                             type="button"
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-slate-200 text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700"
+                            variant="ghost"
+                            size="icon-sm"
+                            className="text-muted-foreground hover:text-foreground"
                             aria-label="Abrir acciones"
                           >
                             <MoreHorizontal className="h-4 w-4" />
-                          </button>
+                          </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-56 min-w-56">
                           <DropdownMenuLabel>Acciones</DropdownMenuLabel>
