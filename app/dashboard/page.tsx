@@ -77,10 +77,10 @@ export default function Page() {
 
   return (
     <ContentLayout>
-      <div className="p-8 max-w-7xl mx-auto space-y-4">
+      <div className="space-y-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Personal de la Empresa</h1>
-          <p className="text-sm text-slate-500">Administra los accesos y roles asignados.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Personal de la Empresa</h1>
+          <p className="text-sm text-muted-foreground">Administra los accesos y roles asignados.</p>
         </div>
 
         {/* 6. Invocación limpia pasando las propiedades */}

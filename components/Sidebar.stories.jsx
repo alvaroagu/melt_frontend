@@ -1,10 +1,12 @@
 import React from 'react';
 import { Sidebar } from './Sidebar';
 
-export default {
+const meta = {
   title: 'Components/Sidebar',
   component: Sidebar,
 };
+
+export default meta;
 
 export const Default = () => (
   <Sidebar>

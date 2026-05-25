@@ -136,13 +136,17 @@ export function Sidebar({ className = "" }: SidebarProps) {
 
       <div
         className={cn(
-          "fixed top-0 left-0 z-40 flex h-screen flex-col border-r border-border/70 bg-sidebar/95 text-sidebar-foreground shadow-[1px_0_0_0_rgba(0,0,0,0.02)] backdrop-blur-xl transition-all duration-300 md:static md:h-auto",
+          "fixed top-12 left-0 z-40 flex h-screen flex-col border-r border-border/70 bg-sidebar/95 text-sidebar-foreground shadow-[1px_0_0_0_rgba(0,0,0,0.02)] backdrop-blur-xl transition-all duration-300 md:static md:h-auto",
           isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
           isCollapsed ? "w-20" : "w-80",
           className
         )}
       >
-        <div className="flex items-center justify-between border-b border-border/70 px-4 py-4">
+        <div className="flex items-center justify-between border-b border-border/70 px-4 py-3">
+          <div className="flex size-9 items-center justify-center rounded-2xl bg-foreground text-background shadow-sm">
+            <span className="text-sm font-medium tracking-[0.2em]">M</span>
+          </div>
+
           <button
             onClick={toggleCollapse}
             className="hidden md:inline-flex size-9 items-center justify-center rounded-xl border border-border/70 bg-background/70 text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
@@ -154,18 +158,6 @@ export function Sidebar({ className = "" }: SidebarProps) {
               <ChevronLeft className="h-4 w-4" />
             )}
           </button>
-
-          <div className="flex items-center gap-2">
-            <div className="flex size-9 items-center justify-center rounded-2xl bg-foreground text-background shadow-sm">
-              <span className="text-sm font-medium tracking-[0.2em]">M</span>
-            </div>
-            {!isCollapsed && (
-              <div className="leading-tight">
-                <p className="text-sm font-medium tracking-[-0.02em]">Melt</p>
-                <p className="text-xs text-muted-foreground">Admin</p>
-              </div>
-            )}
-          </div>
         </div>
 
         {!isCollapsed && (
