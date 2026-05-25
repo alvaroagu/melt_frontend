@@ -3,6 +3,7 @@
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import DataTable, { DataTableColumn, DataTableAction } from "@/components/DataTable";
 import ContentLayout from "@/components/layout/ContentLayout";
+import CategoryForm from "@/components/forms/CategoryForm";
 
 // 2. Defines la estructura exacta de tus registros
 interface EmpresaData {
@@ -90,6 +91,8 @@ export default function Page() {
           getRowId={(row) => row.id} // Clave única para evitar problemas de renderizado de React
           emptyState="No se encontraron miembros en este equipo."
         />
+
+        <CategoryForm />
       </div>
     </ContentLayout>
   );
