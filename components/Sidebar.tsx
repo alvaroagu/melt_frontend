@@ -136,7 +136,7 @@ export function Sidebar({ className = "" }: SidebarProps) {
 
       <div
         className={cn(
-          "fixed top-12 left-0 z-40 flex h-screen flex-col border-r border-border/70 bg-sidebar/95 text-sidebar-foreground shadow-[1px_0_0_0_rgba(0,0,0,0.02)] backdrop-blur-xl transition-all duration-300 md:static md:h-auto",
+          "fixed top-12 left-0 z-40 flex h-[calc(100vh-3rem)] flex-col border-r border-border/70 bg-sidebar/95 text-sidebar-foreground shadow-[1px_0_0_0_rgba(0,0,0,0.02)] backdrop-blur-xl transition-all duration-300 md:static md:h-auto md:top-0 md:h-full",
           isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
           isCollapsed ? "w-20" : "w-80",
           className
