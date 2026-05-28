@@ -2,32 +2,36 @@
 
 import React, { useEffect, useRef, useState } from "react"
 import { ChevronDown, ChevronUp } from "lucide-react"
+import { usePathname } from "next/navigation"
 
+import type { NavigationItem } from "@/lib/navigation"
 import { cn } from "@/lib/utils"
 
-interface NavigationItem {
-  id: string;
-  name: string;
-  icon?: React.ComponentType<{ className?: string }>;
-  href?: string;
-  badge?: string;
-  children?: NavigationItem[];
+type Props = {
+  item: NavigationItem
+  isCollapsed: boolean
+  onNavigate: (href?: string) => void
 }
 
-type Props = {
-  item: NavigationItem;
-  isCollapsed: boolean;
-  activeItem: string;
-  onActivate: (id: string) => void;
-};
+const isPathActive = (pathname: string, href?: string) => {
+  if (!href) {
+    return false
+  }
 
-export default function SidebarItem({ item, isCollapsed, activeItem, onActivate }: Props) {
+  return pathname === href || pathname.startsWith(`${href}/`)
+}
+
+export default function SidebarItem({ item, isCollapsed, onNavigate }: Props) {
+  const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const [hoverOpen, setHoverOpen] = useState(false)
   const liRef = useRef<HTMLLIElement | null>(null)
 
   const hasChildren = !!item.children && item.children.length > 0
-  const isActive = activeItem === item.id || (hasChildren && item.children!.some((c) => c.id === activeItem))
+  const isActive =
+    isPathActive(pathname, item.href) ||
+    (hasChildren && item.children!.some((child) => isPathActive(pathname, child.href)))
+  const isExpanded = hasChildren && (open || isActive)
 
   useEffect(() => {
     const onClickOutside = (e: MouseEvent) => {
@@ -44,13 +48,13 @@ export default function SidebarItem({ item, isCollapsed, activeItem, onActivate 
   const handleMainClick = () => {
     if (hasChildren) {
       setOpen((prev) => !prev)
-    } else {
-      onActivate(item.id)
     }
+
+    onNavigate(item.href)
   }
 
-  const handleChildClick = (childId: string) => {
-    onActivate(childId)
+  const handleChildClick = (childHref?: string) => {
+    onNavigate(childHref)
     setOpen(false)
     setHoverOpen(false)
   }
@@ -71,7 +75,7 @@ export default function SidebarItem({ item, isCollapsed, activeItem, onActivate 
           isCollapsed ? "justify-center px-2" : ""
         )}
         title={isCollapsed ? item.name : undefined}
-        aria-expanded={hasChildren ? open : undefined}
+        aria-expanded={hasChildren ? isExpanded : undefined}
         aria-controls={hasChildren ? `${item.id}-submenu` : undefined}
       >
         <div className="flex min-w-[24px] items-center justify-center">
@@ -106,7 +110,7 @@ export default function SidebarItem({ item, isCollapsed, activeItem, onActivate 
                 </span>
               )}
               {hasChildren && (
-                open ? (
+                isExpanded ? (
                   <ChevronUp className="h-4 w-4 text-current/60" />
                 ) : (
                   <ChevronDown className="h-4 w-4 text-current/60" />
@@ -140,17 +144,17 @@ export default function SidebarItem({ item, isCollapsed, activeItem, onActivate 
       {!isCollapsed && hasChildren && (
         <ul
           id={`${item.id}-submenu`}
-          className={cn("mt-1 space-y-1 pl-8 pr-2", open ? "block" : "hidden")}
+          className={cn("mt-1 space-y-1 pl-8 pr-2", isExpanded ? "block" : "hidden")}
           role="menu"
           aria-label={`${item.name} submenu`}
         >
           {item.children!.map((child) => {
-            const childActive = activeItem === child.id
+            const childActive = isPathActive(pathname, child.href)
             const ChildIcon = child.icon
             return (
               <li key={child.id}>
                 <button
-                  onClick={() => handleChildClick(child.id)}
+                  onClick={() => handleChildClick(child.href)}
                   className={cn(
                     "flex w-full items-center gap-2.5 rounded-2xl px-3 py-2 text-sm transition-colors duration-150",
                     childActive
@@ -189,12 +193,12 @@ export default function SidebarItem({ item, isCollapsed, activeItem, onActivate 
           </div>
           <ul className="space-y-1">
             {item.children!.map((child) => {
-              const childActive = activeItem === child.id
+              const childActive = isPathActive(pathname, child.href)
               const ChildIcon = child.icon
               return (
                 <li key={child.id}>
                   <button
-                    onClick={() => handleChildClick(child.id)}
+                    onClick={() => handleChildClick(child.href)}
                     className={cn(
                       "flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm transition-colors duration-150",
                       childActive

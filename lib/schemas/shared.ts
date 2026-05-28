@@ -59,3 +59,14 @@ export function optionalEmail(maxLength?: number) {
 export function numberInput(schema: z.ZodNumber) {
   return z.preprocess(normalizeNumberInput, schema)
 }
+
+export function optionalNumberInput(schema: z.ZodNumber) {
+  return z.preprocess((value) => {
+    if (typeof value === "string") {
+      const trimmed = value.trim()
+      return trimmed ? Number(trimmed) : undefined
+    }
+
+    return value == null ? undefined : value
+  }, schema.optional())
+}

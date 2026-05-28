@@ -1,22 +1,17 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React, { useEffect } from "react"
 import {
-  BanknoteArrowUp,
-  Boxes,
   ChevronLeft,
   ChevronRight,
-  HandCoins,
-  LayoutDashboardIcon,
   LogOut,
   Menu,
   Search,
-  Settings,
-  ShoppingCart,
-  User,
   X,
 } from "lucide-react"
+import { useRouter } from "next/navigation"
 
+import { navigationItems } from "@/lib/navigation"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -24,74 +19,15 @@ import { Input } from "@/components/ui/input"
 import { useSidebar } from "./SidebarContext"
 import SidebarItem from "./SidebarItem"
 
-interface NavigationItem {
-  id: string;
-  name: string;
-  icon?: React.ComponentType<{ className?: string }>;
-  href?: string;
-  badge?: string;
-  children?: NavigationItem[];
-}
-
 interface SidebarProps {
-  className?: string;
-  children?: React.ReactNode;
-  defaultCollapsed?: boolean;
+  className?: string
+  children?: React.ReactNode
+  defaultCollapsed?: boolean
 }
-
-const navigationItems: NavigationItem[] = [
-  { id: "dashboard", name: "Dashboard", icon: LayoutDashboardIcon, href: "/dashboard" },
-  {
-    id: "sales",
-    name: "Ventas",
-    icon: BanknoteArrowUp,
-    href: "/ventas",
-    children: [
-      { id: "new-sale", name: "Nueva venta", href: "/ventas/resumen" },
-      { id: "sale-details", name: "Historial de ventas", href: "/ventas/detalle" },
-    ]
-  },
-  {
-    id: "documents",
-    name: "Cuentas por cobrar",
-    icon: HandCoins,
-    href: "/cuentas",
-    badge: "3",
-    children: [
-      { id: "credits-pending", name: "Créditos pendientes", href: "/cuentas/facturas" },
-      { id: "payment-history", name: "Historial de pagos", href: "/cuentas/balance" },
-    ],
-  },
-  {
-    id: "inventory",
-    name: "Inventario",
-    icon: Boxes,
-    href: "/inventario",
-    badge: "12",
-    children: [
-      { id: "iventory-products", name: "Productos", href: "/inventario/productos" },
-      { id: "categories", name: "Categorías", href: "/inventario/categoria" },
-    ],
-  },
-  {
-    id: "purchases",
-    name: "Compras / Proveedores",
-    icon: ShoppingCart,
-    href: "/compras_proveedores",
-    badge: "12",
-    children: [
-      { id: "register-purcharse", name: "Registrar compra", href: "/inventario/productos" },
-      { id: "purchase-history", name: "Historial de compras", href: "/inventario/categoria" },
-      { id: "vendors", name: "Proveedores", href: "/inventario/categoria" },
-    ],
-  },
-  { id: "clientes", name: "Clientes", icon: User, href: "/clientes" },
-  { id: "settings", name: "Configuración", icon: Settings, href: "/configuracion" },
-]
 
 export function Sidebar({ className = "" }: SidebarProps) {
   const { isCollapsed, setIsCollapsed, isOpen, setIsOpen } = useSidebar()
-  const [activeItem, setActiveItem] = useState("dashboard")
+  const router = useRouter()
 
   useEffect(() => {
     const handleResize = () => {
@@ -110,8 +46,11 @@ export function Sidebar({ className = "" }: SidebarProps) {
   const toggleSidebar = () => setIsOpen(!isOpen)
   const toggleCollapse = () => setIsCollapsed(!isCollapsed)
 
-  const handleItemClick = (itemId: string) => {
-    setActiveItem(itemId)
+  const handleNavigate = (href?: string) => {
+    if (href) {
+      router.push(href)
+    }
+
     if (window.innerWidth < 768) {
       setIsOpen(false)
     }
@@ -180,8 +119,7 @@ export function Sidebar({ className = "" }: SidebarProps) {
                 key={item.id}
                 item={item}
                 isCollapsed={isCollapsed}
-                activeItem={activeItem}
-                onActivate={handleItemClick}
+                onNavigate={handleNavigate}
               />
             ))}
           </ul>
@@ -216,7 +154,7 @@ export function Sidebar({ className = "" }: SidebarProps) {
 
           <div className="p-3">
             <button
-              onClick={() => handleItemClick("logout")}
+              onClick={() => handleNavigate("/dashboard")}
               className={cn(
                 "group relative flex w-full items-center rounded-2xl border border-border/70 bg-background/80 text-left transition-colors hover:bg-muted/60",
                 isCollapsed ? "justify-center p-2.5" : "gap-2.5 px-3 py-2.5"
