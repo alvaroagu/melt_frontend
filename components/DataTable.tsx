@@ -68,7 +68,7 @@ export function DataTable<T extends AnyRecord>({
   return (
     <div
       className={cn(
-        "w-full overflow-x-auto rounded-2xl border border-border/70 bg-card/95 shadow-[0_1px_0_0_rgba(0,0,0,0.03)]",
+        "w-full overflow-x-auto rounded-2xl bg-transparent",
         className
       )}
     >

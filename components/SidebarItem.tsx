@@ -70,7 +70,7 @@ export default function SidebarItem({ item, isCollapsed, onNavigate }: Props) {
         className={cn(
           "group relative flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left transition-colors duration-200",
           isActive
-            ? "bg-foreground text-background shadow-sm"
+            ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm"
             : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
           isCollapsed ? "justify-center px-2" : ""
         )}
@@ -83,7 +83,9 @@ export default function SidebarItem({ item, isCollapsed, onNavigate }: Props) {
             <Icon
               className={cn(
                 "h-4.5 w-4.5 flex-shrink-0",
-                isActive ? "text-background" : "text-muted-foreground group-hover:text-foreground"
+                isActive
+                  ? "text-sidebar-primary-foreground"
+                  : "text-muted-foreground group-hover:text-foreground"
               )}
             />
           ) : (
@@ -102,7 +104,7 @@ export default function SidebarItem({ item, isCollapsed, onNavigate }: Props) {
                   className={cn(
                     "rounded-full border px-1.5 py-0.5 text-[11px] font-medium tracking-[0.14em]",
                     isActive
-                      ? "border-background/20 bg-background/15 text-background"
+                      ? "border-sidebar-primary-foreground/20 bg-sidebar-primary-foreground/15 text-sidebar-primary-foreground"
                       : "border-border/70 bg-background/60 text-muted-foreground"
                   )}
                 >
@@ -158,7 +160,7 @@ export default function SidebarItem({ item, isCollapsed, onNavigate }: Props) {
                   className={cn(
                     "flex w-full items-center gap-2.5 rounded-2xl px-3 py-2 text-sm transition-colors duration-150",
                     childActive
-                      ? "bg-foreground text-background font-medium"
+                      ? "bg-sidebar-primary text-sidebar-primary-foreground font-medium"
                       : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                   )}
                 >
@@ -167,7 +169,9 @@ export default function SidebarItem({ item, isCollapsed, onNavigate }: Props) {
                       <ChildIcon
                         className={cn(
                           "h-3.5 w-3.5",
-                          childActive ? "text-background" : "text-muted-foreground"
+                          childActive
+                            ? "text-sidebar-primary-foreground"
+                            : "text-muted-foreground"
                         )}
                       />
                     ) : (

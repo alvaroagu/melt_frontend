@@ -82,7 +82,7 @@ export function Sidebar({ className = "" }: SidebarProps) {
         )}
       >
         <div className="flex items-center justify-between border-b border-border/70 px-4 py-3">
-          <div className="flex size-9 items-center justify-center rounded-2xl bg-foreground text-background shadow-sm">
+          <div className="flex size-9 items-center justify-center rounded-2xl bg-sidebar-primary text-sidebar-primary-foreground shadow-sm">
             <span className="text-sm font-medium tracking-[0.2em]">M</span>
           </div>
 
@@ -146,7 +146,7 @@ export function Sidebar({ className = "" }: SidebarProps) {
                   <div className="flex size-9 items-center justify-center rounded-full bg-muted/70">
                     <span className="text-sm font-medium">JD</span>
                   </div>
-                  <div className="absolute -right-1 -bottom-1 size-3 rounded-full border-2 border-background bg-foreground" />
+                  <div className="absolute -right-1 -bottom-1 size-3 rounded-full border-2 border-background bg-sidebar-primary" />
                 </div>
               </div>
             )}
