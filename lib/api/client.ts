@@ -49,6 +49,7 @@ function getErrorMessage(status: number, body: unknown) {
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`, {
     cache: "no-store",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       ...(init?.headers ?? {}),
@@ -69,10 +70,10 @@ export function apiGet<T>(path: string) {
   return request<T>(path)
 }
 
-export function apiPost<T>(path: string, data: unknown) {
+export function apiPost<T>(path: string, data?: unknown) {
   return request<T>(path, {
     method: "POST",
-    body: JSON.stringify(data),
+    body: data === undefined ? undefined : JSON.stringify(data),
   })
 }
 

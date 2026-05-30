@@ -1,7 +1,7 @@
 import "./globals.css";
 import { Bricolage_Grotesque, Geist_Mono, Onest } from "next/font/google";
-import DashboardLayout from "@/components/layout/DashboardLayout";
-import NavBar from "@/components/layout/NavBar";
+import { AuthProvider } from "@/components/auth/AuthProvider";
+import AppShell from "@/components/layout/AppShell";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -36,11 +36,10 @@ export default function RootLayout({
     >
       <body className="min-h-screen bg-background text-foreground antialiased font-sans transition-colors">
         <ThemeProvider>
-          <div className="min-h-screen w-full flex flex-col">
-            <NavBar />
-            <DashboardLayout>{children}</DashboardLayout>
+          <AuthProvider>
+            <AppShell>{children}</AppShell>
             <Toaster richColors position="top-right" />
-          </div>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

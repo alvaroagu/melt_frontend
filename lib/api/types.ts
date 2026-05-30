@@ -1,5 +1,25 @@
 export type DecimalValue = number | string
 
+export type AuthRole = "ADMIN" | "USER"
+
+export type AuthUser = {
+  id: number
+  email: string
+  name: string | null
+  role: AuthRole
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export type AuthSessionResponse = {
+  user: AuthUser
+}
+
+export type LogoutResponse = {
+  success: true
+}
+
 export type Category = {
   id: number
   name: string

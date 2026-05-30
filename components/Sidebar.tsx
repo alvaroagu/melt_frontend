@@ -10,7 +10,9 @@ import {
   X,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
+import { useAuth } from "@/components/auth/AuthProvider"
 import { navigationItems } from "@/lib/navigation"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
@@ -25,9 +27,33 @@ interface SidebarProps {
   defaultCollapsed?: boolean
 }
 
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("")
+}
+
+function getRoleLabel(role?: string | null) {
+  switch (role) {
+    case "ADMIN":
+      return "Administrador"
+    case "USER":
+      return "Usuario"
+    default:
+      return undefined
+  }
+}
+
 export function Sidebar({ className = "" }: SidebarProps) {
   const { isCollapsed, setIsCollapsed, isOpen, setIsOpen } = useSidebar()
   const router = useRouter()
+  const { logout, user } = useAuth()
+  const displayName = user?.name ?? user?.email ?? "Usuario"
+  const roleLabel = getRoleLabel(user?.role)
+  const initials = getInitials(displayName)
 
   useEffect(() => {
     const handleResize = () => {
@@ -45,6 +71,16 @@ export function Sidebar({ className = "" }: SidebarProps) {
 
   const toggleSidebar = () => setIsOpen(!isOpen)
   const toggleCollapse = () => setIsCollapsed(!isCollapsed)
+
+  const handleLogout = async () => {
+    try {
+      await logout()
+    } catch {
+      toast.error("No se pudo cerrar la sesión.")
+    } finally {
+      router.replace("/login")
+    }
+  }
 
   const handleNavigate = (href?: string) => {
     if (href) {
@@ -130,11 +166,15 @@ export function Sidebar({ className = "" }: SidebarProps) {
             {!isCollapsed ? (
               <div className="flex items-center rounded-2xl border border-border/70 bg-background/80 px-3 py-2">
                 <div className="flex size-8 items-center justify-center rounded-full bg-muted/70">
-                  <span className="text-sm font-medium text-foreground">JD</span>
+                  <span className="text-sm font-medium text-foreground">{initials}</span>
                 </div>
                 <div className="ml-2.5 min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium tracking-[-0.01em] text-foreground">John Doe</p>
-                  <p className="truncate text-xs text-muted-foreground">Senior Administrator</p>
+                  <p className="truncate text-sm font-medium tracking-[-0.01em] text-foreground">
+                    {displayName}
+                  </p>
+                  <p className="truncate text-xs text-muted-foreground">
+                    {roleLabel ?? "Sesión activa"}
+                  </p>
                 </div>
                 <Badge variant="secondary" className="ml-2 border-border/70 uppercase tracking-[0.14em]">
                   Online
@@ -144,7 +184,7 @@ export function Sidebar({ className = "" }: SidebarProps) {
               <div className="flex justify-center">
                 <div className="relative">
                   <div className="flex size-9 items-center justify-center rounded-full bg-muted/70">
-                    <span className="text-sm font-medium">JD</span>
+                    <span className="text-sm font-medium">{initials}</span>
                   </div>
                   <div className="absolute -right-1 -bottom-1 size-3 rounded-full border-2 border-background bg-sidebar-primary" />
                 </div>
@@ -154,22 +194,22 @@ export function Sidebar({ className = "" }: SidebarProps) {
 
           <div className="p-3">
             <button
-              onClick={() => handleNavigate("/dashboard")}
+              onClick={() => void handleLogout()}
               className={cn(
                 "group relative flex w-full items-center rounded-2xl border border-border/70 bg-background/80 text-left transition-colors hover:bg-muted/60",
                 isCollapsed ? "justify-center p-2.5" : "gap-2.5 px-3 py-2.5"
               )}
-              title={isCollapsed ? "Logout" : undefined}
+              title={isCollapsed ? "Cerrar sesión" : undefined}
             >
               <div className="flex min-w-[24px] items-center justify-center">
                 <LogOut className="h-4.5 w-4.5 flex-shrink-0 text-muted-foreground group-hover:text-foreground" />
               </div>
 
-              {!isCollapsed && <span className="text-sm text-foreground">Logout</span>}
+              {!isCollapsed && <span className="text-sm text-foreground">Cerrar sesión</span>}
 
               {isCollapsed && (
                 <div className="absolute left-full ml-2 rounded-xl border border-border/70 bg-card px-2.5 py-1.5 text-xs text-foreground opacity-0 invisible whitespace-nowrap shadow-xl transition-all duration-200 group-hover:visible group-hover:opacity-100">
-                  Logout
+                  Cerrar sesión
                   <div className="absolute left-0 top-1/2 h-2 w-2 -translate-x-1 -translate-y-1/2 rotate-45 border-l border-b border-border/70 bg-card" />
                 </div>
               )}

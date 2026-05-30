@@ -9,15 +9,26 @@ import type { CreateSupplierInput } from "@/lib/schemas/supplier.schema"
 
 import { apiDelete, apiGet, apiPatch, apiPost } from "./client"
 import type {
+  AuthSessionResponse,
+  AuthUser,
   Category,
   Customer,
   Flavor,
   PaymentMethod,
   Product,
+  LogoutResponse,
   Purchase,
   Sale,
   Supplier,
 } from "./types"
+
+export const authApi = {
+  login: (data: { email: string; password: string }) =>
+    apiPost<AuthSessionResponse>("/auth/login", data),
+  refresh: () => apiPost<AuthSessionResponse>("/auth/refresh"),
+  logout: () => apiPost<LogoutResponse>("/auth/logout"),
+  me: () => apiGet<AuthUser>("/auth/me"),
+}
 
 export const categoriesApi = {
   list: () => apiGet<Category[]>("/categories"),

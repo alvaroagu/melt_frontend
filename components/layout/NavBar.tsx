@@ -2,8 +2,9 @@
 
 import Link from "next/link"
 import { LogOut } from "lucide-react"
+import { useRouter } from "next/navigation"
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -14,18 +15,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { ModeToggle } from "@/components/ui/ModeToggle"
 import { cn } from "@/lib/utils"
-
-type NavBarUser = {
-  name: string
-  role?: string
-  initials?: string
-  avatarUrl?: string
-}
-
-type NavBarProps = {
-  className?: string
-  user?: NavBarUser
-}
+import { useAuth } from "@/components/auth/AuthProvider"
+import { toast } from "sonner"
 
 function getInitials(name: string) {
   return name
@@ -36,15 +27,38 @@ function getInitials(name: string) {
     .join("")
 }
 
-export default function NavBar({
-  className,
-  user = {
-    name: "Usuario Melt",
-    role: "Administrador",
-    initials: "UM",
-  },
-}: NavBarProps) {
-  const initials = user.initials ?? getInitials(user.name)
+function getRoleLabel(role?: string | null) {
+  switch (role) {
+    case "ADMIN":
+      return "Administrador"
+    case "USER":
+      return "Usuario"
+    default:
+      return undefined
+  }
+}
+
+export default function NavBar({ className }: { className?: string }) {
+  const router = useRouter()
+  const { logout, user } = useAuth()
+
+  if (!user) {
+    return null
+  }
+
+  const displayName = user.name ?? user.email
+  const initials = getInitials(displayName)
+  const roleLabel = getRoleLabel(user.role)
+
+  const handleLogout = async () => {
+    try {
+      await logout()
+    } catch {
+      toast.error("No se pudo cerrar la sesión.")
+    } finally {
+      router.replace("/login")
+    }
+  }
 
   return (
     <header
@@ -68,9 +82,6 @@ export default function NavBar({
                 className="rounded-full border-border/70 bg-background/80 shadow-sm"
               >
                 <Avatar size="sm" className="size-7">
-                  {user.avatarUrl ? (
-                    <AvatarImage src={user.avatarUrl} alt={user.name} />
-                  ) : null}
                   <AvatarFallback className="bg-primary/10 text-primary">
                     {initials}
                   </AvatarFallback>
@@ -81,9 +92,9 @@ export default function NavBar({
 
             <DropdownMenuContent align="end" className="w-56">
               <div className="px-1.5 py-1.5">
-                <p className="text-sm font-medium text-foreground">{user.name}</p>
-                {user.role ? (
-                  <p className="text-xs text-muted-foreground">{user.role}</p>
+                <p className="text-sm font-medium text-foreground">{displayName}</p>
+                {roleLabel ? (
+                  <p className="text-xs text-muted-foreground">{roleLabel}</p>
                 ) : null}
               </div>
 
@@ -98,7 +109,7 @@ export default function NavBar({
 
               <DropdownMenuSeparator />
 
-              <DropdownMenuItem variant="destructive">
+              <DropdownMenuItem variant="destructive" onSelect={() => void handleLogout()}>
                 Cerrar sesión
                 <LogOut className="ml-auto size-4" />
               </DropdownMenuItem>
